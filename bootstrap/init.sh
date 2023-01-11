@@ -47,18 +47,5 @@ sed -e "s/project-id-here/${PROJECT_ID}/" templates/template.attestor-policy.yam
 gcloud deploy apply --file clouddeploy.yaml \
 --region=us-central1 --project=$PROJECT_ID
 
-mkdir cw
-cat << EOF > cw/cluster.json
-{
-"network": "projects/$PROJECT_ID/global/networks/default",
-"subnetwork": "projects/$PROJECT_ID/regions/$REGION/subnetworks/default",
-}
-EOF
-
-# create cloud workstation cluster using config
-curl -H "Authorization: Bearer $(gcloud auth print-access-token)" \
- -H "Content-Type: application/json" \
- -d @cw/cluster.json \
-"https://workstations.googleapis.com/v1beta/projects/$PROJECT_ID/locations/$REGION/workstationClusters?workstation_cluster_id=${WS_CLUSTER}"
 
 
