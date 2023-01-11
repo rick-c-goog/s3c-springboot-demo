@@ -8,7 +8,7 @@ fi
 # sets the current project for gcloud
 gcloud config set project $PROJECT_ID
 
-source bootstrap/env.sh
+source env.sh
 
 # Enables various APIs you'll need
 gcloud services enable container.googleapis.com cloudbuild.googleapis.com \
