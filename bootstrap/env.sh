@@ -8,11 +8,9 @@ fi
 
 # sets the current project for gcloud
 gcloud config set project $PROJECT_ID
-
-PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
 export CLOUDBUILD_SA=$PROJECT_NUMBER@cloudbuild.gserviceaccount.com
-REGION=us-central1
-GITHUB_REPO_OWNER="VeerMuchandi"
+export GITHUB_REPO_OWNER="VeerMuchandi"
 export REGION=us-central1
 
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
@@ -27,3 +25,4 @@ export PRODDB_USER=user
 export PRODDB_PASSWORD=CHANGEME
 
 export VPC_CONNECTOR=itemconnector
+export WS_CLUSTER=my-cw-cluster

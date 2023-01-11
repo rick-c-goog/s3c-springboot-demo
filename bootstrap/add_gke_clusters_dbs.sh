@@ -1,20 +1,5 @@
 #!/bin/bash
-export PROJECT_ID=$(gcloud config get-value project)
-export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
-export REGION=us-central1
-export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-
-
-export DB_INSTANCE_NAME=item-db-instance
-export DB_INSTANCE_PASSWORD=CHANGEME
-export TESTDB_NAME=item-testdb
-export TESTDB_USER=user
-export TESTDB_PASSWORD=CHANGEME
-export PRODDB_NAME=item-proddb
-export PRODDB_USER=user
-export PRODDB_PASSWORD=CHANGEME
-
-export VPC_CONNECTOR=itemconnector
+source bootstrap/env.sh
 
 
 gcloud services enable \

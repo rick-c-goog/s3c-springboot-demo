@@ -1,10 +1,6 @@
 #!/bin/bash
 
-PROJECT_ID=$(gcloud config get project)
-REGION=us-central1
-PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
-export CLOUDBUILD_SA=$PROJECT_NUMBER@cloudbuild.gserviceaccount.com
-REGION=us-central1
+source bootstrap/env.sh
 
 #create a key ring
 gcloud kms keyrings create "binauthz" \

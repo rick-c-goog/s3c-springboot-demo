@@ -8,11 +8,13 @@ fi
 # sets the current project for gcloud
 gcloud config set project $PROJECT_ID
 
+source bootstrap/env.sh
+
 # Enables various APIs you'll need
 gcloud services enable container.googleapis.com cloudbuild.googleapis.com \
 artifactregistry.googleapis.com containerregistry.googleapis.com clouddeploy.googleapis.com \
 cloudresourcemanager.googleapis.com binaryauthorization.googleapis.com \
-cloudkms.googleapis.com run.googleapis.com
+cloudkms.googleapis.com run.googleapis.com workstations.googleapis.com
 
 # add the clouddeploy.jobRunner role to your compute service account
 gcloud projects add-iam-policy-binding $PROJECT_ID \
@@ -44,3 +46,19 @@ sed -e "s/project-id-here/${PROJECT_ID}/" templates/template.attestor-policy.yam
 # creates the Google Cloud Deploy pipeline
 gcloud deploy apply --file clouddeploy.yaml \
 --region=us-central1 --project=$PROJECT_ID
+
+mkdir cw
+cat << EOF > cw/cluster.json
+{
+"network": "projects/$PROJECT_ID/global/networks/default",
+"subnetwork": "projects/$PROJECT_ID/regions/$REGION/subnetworks/default",
+}
+EOF
+
+# create cloud workstation cluster using config
+curl -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+ -H "Content-Type: application/json" \
+ -d @cw/cluster.json \
+"https://workstations.googleapis.com/v1beta/projects/$PROJECT_ID/locations/$REGION/workstationClusters?workstation_cluster_id=${WS_CLUSTER}"
+
+

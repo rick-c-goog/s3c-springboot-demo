@@ -1,9 +1,6 @@
 #!/bin/bash
 
-PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
-export CLOUDBUILD_SA=$PROJECT_NUMBER@cloudbuild.gserviceaccount.com
-REGION=us-central1
-GITHUB_REPO_OWNER="VeerMuchandi"
+source bootstrap/env.sh
 
 # create build trigger connecting to the forked GitHub repo
 
