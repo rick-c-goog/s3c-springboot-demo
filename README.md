@@ -26,7 +26,7 @@ cd s3c-springboot-demo
 The following script enables all needed APIs and deploy the pipeline
 
 ```
-./init.sh
+./bootstrap/init.sh
 ```
 Verify that the Google Cloud Deploy pipeline is created in the [console](https://console.cloud.google.com/deploy/delivery-pipelines).
 
@@ -47,7 +47,7 @@ Connect the GitHub repository to Cloud Build for the `global` region, following 
 This script creates two GKE clusters with names `test-sec` and `prod-sec` and two databases for test and prod. More GKE clusters can be added. The `clouddeploy.yaml` file should be updated accordingly.
 
 ```
-./add_gke_clusters_dbs.sh
+./bootstrap/add_gke_clusters_dbs.sh
 ```
 
 ### Set up Kritis Signer
@@ -68,7 +68,7 @@ popd
 Run the following script to create a key ring, add signing keys for vulnerability signer, add a note, attestor and required permissions.
 
 ```
-./add-signing-keys.sh
+./bootstrap/add-signing-keys.sh
 ```
 
 Verify that your new attestor appears in the [console UI](https://console.cloud.google.com/security/binary-authorization/attestors). You will see two attestors
@@ -88,7 +88,7 @@ Verify the policy is created from the [console UI](https://console.cloud.google.
 The following script will create a cloudbuild trigger connecting to the forked GitHub repository. It will also create private pool and provide necessary IAM access to the service account to be able to run container analysis, attach notes etc.
 
 ```
-./setup_cloudbuild.yaml
+./bootstrap/setup_cloudbuild.yaml
 ```
 ### Set up your IDE and Source Code
 
