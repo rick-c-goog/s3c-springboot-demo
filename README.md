@@ -6,10 +6,24 @@ This demo covers the Software Delivery Shield features such as Cloud Workstation
 
 ## Demo Setup
 ### Create a project
-* Create a Google Cloud project and provide all permissions for GKE setup. 
+* Create a Google Cloud project and provide all [permissions for GKE setup](https://raw.githubusercontent.com/slsa-demo/tkn-binauth/main/arg_k8s_perms.sh?token=GHSAT0AAAAAABPJH2IFVGFOEYWPGGN6IVFOY57FFAA) if running on argolis. 
+
 * Set PROJECT_ID
 ```
 export PROJECT_ID=$(gcloud config get project)
+```
+
+### Download the bootstrap scripts from this repo
+
+```
+mkdir s3c-demo
+cd s3c-demo
+wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/env.sh
+wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/init.sh
+wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/add_gke_clusters_dbs.sh
+wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/add-signing-keys.sh
+wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/setup_cloudbuild.sh
+chmod +x *.sh
 ```
 
 ### Create Container Registry and Cloud Deploy pipeline
@@ -23,7 +37,7 @@ Verify that the Google Cloud Deploy pipeline is created in the [console](https:/
 Also notice that the artifact registry with name `maven-demo-app` is created and the automatic vulnerability scanning is turned on from the [console](https://console.cloud.google.com/artifacts).
 
 ### Fork the source code git repo
-[Fork this source code repo on Github](https://github.com/VeerMuchandi/sbcrudapp)
+We will use a spring boot application in this demo. The source code is in a separate repository. [Fork the source code repo on Github](https://github.com/VeerMuchandi/sbcrudapp)
 
 
 

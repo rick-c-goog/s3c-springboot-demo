@@ -1,5 +1,5 @@
 #!/bin/bash
-source bootstrap/env.sh
+source env.sh
 
 
 gcloud services enable \
