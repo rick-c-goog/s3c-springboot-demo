@@ -25,19 +25,7 @@ Also notice that the artifact registry with name `maven-demo-app` is created and
 ### Fork the source code git repo
 [Fork this source code repo on Github](https://github.com/VeerMuchandi/sbcrudapp)
 
-### Set up your IDE and Source Code
 
-#### Install Cloud Workstations
-TBD
-
-#### Create a workstation
-TBD
-
-#### Download Cloud Code Source Protect extension
-TBD
-
-#### Download your forked repo into your Workstation instance
-TBD
 
 ### Connect repository to Cloud Build 
 This is a manual step to be handled via [Console](https://console.cloud.google.com/cloud-build). 
@@ -92,10 +80,60 @@ The following script will create a cloudbuild trigger connecting to the forked G
 ```
 . ./bootstrap/setup_cloudbuild.yaml
 ```
+### Set up your IDE and Source Code
+
+### Install Cloud Workstations
+
+This demo will showcase Cloud Workstations as the IDE. If you already have Cloud Workstations cluster installed somewhere (it doesnt have to be in this project) you can use it. Otherwise you can set up [cloud workstation configuration](https://cloud.google.com/workstations/docs/create-configuration) and start a [workstation instance](https://cloud.google.com/workstations/docs/create-workstation). 
+
+If you are creating a new Cloud Workstation cluster it takes 10 mins to stand up a new cluster.
+
+* Launch your workstation instance as explained [here](https://cloud.google.com/workstations/docs/create-workstation#launch_your_workstation).
+
+* On the status bar at the bottom of the window, click on `Connect to Google Cloud`, click the link to authenticate with your credentials. 
+
+* On the status bar, click on `Select Project` and choose the above project represented by PROJECT_ID above. This way you can use a cloud workstation (even if preexisting in a different project) to work with this demo.   
+
+#### Install a few useful extensions and tools
+
+Open a terminal and install the following useful tools and extensions.
+
+* Tools jq, httpie and gettext-base
+```
+sudo apt install -y gettext-base jq httpie
+```
+* Java Extension Pack
+```
+wget https://open-vsx.org/api/vscjava/vscode-java-pack/0.25.0/file/vscjava.vscode-java-pack-0.25.0.vsix
+code-oss-cloud-workstations --install-extension vscjava.vscode-java-pack-0.25.0.vsix
+```
+* Java Debug
+```
+wget https://open-vsx.org/api/vscjava/vscode-java-debug/0.47.0/file/vscjava.vscode-java-debug-0.47.0.vsix
+code-oss-cloud-workstations --install-extension vscjava.vscode-java-debug-0.47.0.vsix
+```
+* Java Language Support
+```
+wget https://open-vsx.org/api/redhat/java/linux-x64/1.13.0/file/redhat.java-1.13.0@linux-x64.vsix
+code-oss-cloud-workstations --install-extension redhat.java-1.13.0@linux-x64.vsix
+```
+#### Download Cloud Code Source Protect extension
+
+This extension is in private preview at the time of writing this document, and you need to request access as explained [here](https://cloud.google.com/software-supply-chain-security/docs/safeguard-source#:~:text=Cloud%20Code%20source%20protect%20(Preview)&text=Cloud%20Code%20source%20protect%20gives,they%20work%20in%20their%20IDEs) or visit this [internal link](go/cc-s3c-ext) and follow the instructions to install Cloud Code Source Protect extension.
+
+**Tips:** 
+* To upload the vsix extension (files) to the workstation instance, go to explorer view, open a folder and then right click in the explorer to **Upload** file from your local machine.
+
+#### Download your forked repo into your Workstation instance
+
+```
+git clone REPLACE_YOUR_FORKED_CODEREPO
+```
 
 ## Steps to Demo
 
-1. Open the Workstation instance and the forked source code. You will notice two folders with names `bad` and `good`. The `bad` folder contains pom.xml file with vulnerabilites and also the `vulnz-signing-policy`. Copy that to the root of the repository.
+1. Open the Workstation instance and the forked source code.
+`File`->`Open Folder` and select your forked git repository folder. Once the repo is open in the explorer, you will notice two folders with names `bad` and `good`. The `bad` folder contains pom.xml file with vulnerabilites and also the `vulnz-signing-policy`. Copy that to the root of the repository.
 2. Show the issues pointed by the Cloud Code Source Protect. Explain how Cloud Code Source Protect identifies issues with transitive dependencies. Fix a couple of issues by importing right dependencies. Don'f fix all the issues.
 3. Show how the `cloudbuild.yaml` uses kritis signer to run signing based on the `vulnz-signing-policy`. Walk through the file to show how the `spec` allows choosing severity levels and allow listing specific CVEs.
 4. Commit the repository. Since CloudBuild trigger was setup, it will start cloud build. Navigate to CloudBuild console and show how the build fails at the signing step.
