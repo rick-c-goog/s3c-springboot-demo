@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source env.sh
+source bootstrap/env.sh
 
 #create a key ring
 gcloud kms keyrings create "binauthz" \

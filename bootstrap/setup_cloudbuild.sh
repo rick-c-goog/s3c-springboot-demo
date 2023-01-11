@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source env.sh
+source bootstrap/env.sh
 
 # create build trigger connecting to the forked GitHub repo
 

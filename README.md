@@ -15,15 +15,11 @@ export PROJECT_ID=$(gcloud config get project)
 
 ### Download the bootstrap scripts from this repo
 
+Clone this demo repo. This will download all the scripts you need to run to setup infrastructure for the demo.
+
 ```
-mkdir s3c-demo
-cd s3c-demo
-wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/env.sh
-wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/init.sh
-wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/add_gke_clusters_dbs.sh
-wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/add-signing-keys.sh
-wget https://raw.githubusercontent.com/VeerMuchandi/s3c-springboot-demo/main/bootstrap/setup_cloudbuild.sh
-chmod +x *.sh
+git clone https://github.com/VeerMuchandi/s3c-springboot-demo
+cd s3c-springboot-demo
 ```
 
 ### Create Container Registry and Cloud Deploy pipeline
