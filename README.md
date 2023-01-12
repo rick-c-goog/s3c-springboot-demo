@@ -37,10 +37,10 @@ We will use a spring boot application in this demo. The source code is in a sepa
 
 
 
-### Connect repository to Cloud Build 
+### Connect forked repository to Cloud Build 
 This is a manual step to be handled via [Console](https://console.cloud.google.com/cloud-build). 
 
-Connect the GitHub repository to Cloud Build for the `global` region, following the [steps here](https://cloud.google.com/build/docs/automating-builds/github/connect-repo-github)
+Connect the forked GitHub repository to Cloud Build for the `global` region, following the [steps here](https://cloud.google.com/build/docs/automating-builds/github/connect-repo-github)
 
 ### Standup GKE clusters
 
@@ -88,7 +88,7 @@ Verify the policy is created from the [console UI](https://console.cloud.google.
 The following script will create a cloudbuild trigger connecting to the forked GitHub repository. It will also create private pool and provide necessary IAM access to the service account to be able to run container analysis, attach notes etc.
 
 ```
-./bootstrap/setup_cloudbuild.yaml
+./bootstrap/setup_cloudbuild.sh
 ```
 ### Set up your IDE and Source Code
 
@@ -139,20 +139,69 @@ This extension is in private preview at the time of writing this document, and y
 ```
 git clone REPLACE_YOUR_FORKED_CODEREPO
 ```
+#### Configure git username and email on the workstation
+```
+git config --global user.name "John Doe"
+git config --global user.email johndoe@example.com
+```
 
 ## Steps to Demo
 
 1. Open the Workstation instance and the forked source code.
 `File`->`Open Folder` and select your forked git repository folder. Once the repo is open in the explorer, you will notice two folders with names `bad` and `good`. The `bad` folder contains pom.xml file with vulnerabilites and also the `vulnz-signing-policy`. Copy that to the root of the repository.
-2. Show the issues pointed by the Cloud Code Source Protect. Explain how Cloud Code Source Protect identifies issues with transitive dependencies. Fix a couple of issues by importing right dependencies. Don'f fix all the issues.
-3. Show how the `cloudbuild.yaml` uses kritis signer to run signing based on the `vulnz-signing-policy`. Walk through the file to show how the `spec` allows choosing severity levels and allow listing specific CVEs.
-4. Commit the repository. Since CloudBuild trigger was setup, it will start cloud build. Navigate to CloudBuild console and show how the build fails at the signing step.
-5. Now replace with the good `pom.xml` file which has all the fixes (CAUTION: the CVEs keep changing, so you may have to try this out during preparation and add additional fixes. If certain CVEs dont have fixes add them to the Allow list!!). This time the build should be successful and the signing should be complete. 
-6. Once the build is complete, it triggers deployment using Cloud Deploy. Navigate to Cloud Deploy on Console to show the same.
-7. Show the binauth policy on the Test Cluster. It accepts only images created via cloud build. Optionally, try deploying a random container and it should fail.
-8. Show the running application in the Test cluster. 
-9. Promote to the next environment. Show the manual approval process as a gate before deploying to production.
-10. Deploy to production and show the success.
+2. Show the issues pointed by the Cloud Code Source Protect. Explain how Cloud Code Source Protect identifies issues with transitive dependencies. Fix a couple of issues by importing right dependencies. Don'f fix all the issues and commit and push the changes to the Git repo. 
+3. Show how the `cloudbuild.yaml` uses kritis signer to run signing based on the `vulnz-signing-policy` as in the snippet below 
+```
+- name: gcr.io/$PROJECT_ID/kritis-signer
+    entrypoint: /bin/bash
+    args:
+    - -c
+    - |
+      /kritis/signer \
+      -v=10 \
+      -alsologtostderr \
+      -image=$(/bin/cat image-digest.txt) \
+      -policy=./vulnz-signing-policy.yaml \
+      -kms_key_name=${_KMS_KEY_NAME} \
+      -kms_digest_alg=${_KMS_DIGEST_ALG} \
+      -note_name=${_NOTE_NAME}
+    waitFor: ['push']
+``` 
+Walk through the `vulnz-signing-policy` file in the workstation to show how the `spec` allows choosing severity levels and allow listing specific CVEs as in the code snippet below:
+
+```
+spec:
+  imageVulnerabilityRequirements:
+    maximumFixableSeverity: MEDIUM
+    maximumUnfixableSeverity: LOW
+    allowlistCVEs:
+    - projects/goog-vulnz/notes/CVE-2022-43680
+```
+
+4. Commit the repository. Since you configured the build trigger, it will trigger a build as soon as you push the changes to Git repo. You can watch the build running via [console](console.cloud.google.com/cloud-build/builds) and show how the build fails at the signing step. Look at the build logs for the `vulnsign` step to see how the some critical and high vulnerabilities were discovered during container scanning as under:
+
+```
+E0112 18:31:51.268507       1 main.go:209] Found 9 violations in image us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f:
+E0112 18:31:51.268536       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2022-22965 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity CRITICAL exceeding max fixable severity MEDIUM
+E0112 18:31:51.268566       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2022-42003 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity HIGH exceeding max fixable severity MEDIUM
+E0112 18:31:51.268576       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2022-22968 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity HIGH exceeding max fixable severity MEDIUM
+E0112 18:31:51.268584       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2022-31197 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity HIGH exceeding max fixable severity MEDIUM
+E0112 18:31:51.268593       1 main.go:211] found unfixable CVE projects/goog-vulnz/notes/CVE-2022-42898 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity MEDIUM exceeding max unfixable severity LOW
+E0112 18:31:51.268604       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2022-22970 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity HIGH exceeding max fixable severity MEDIUM
+E0112 18:31:51.268612       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2022-42004 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity HIGH exceeding max fixable severity MEDIUM
+E0112 18:31:51.268622       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2022-21724 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity HIGH exceeding max fixable severity MEDIUM
+E0112 18:31:51.268632       1 main.go:211] found fixable CVE projects/goog-vulnz/notes/CVE-2020-36518 in us-central1-docker.pkg.dev/secure-s3c-mvn3/maven-demo-app/myspringbootapp@sha256:c98e9694ee5a28ccb4beee5956bba77d1d627044329ab05693358fd98d70f62f, which has severity HIGH exceeding max fixable severity MEDIUM
+```
+Explain that even if a developer did not fix the issues, how these issues would be caught as part of pipeline through container scanning.
+
+5. Now replace with the good `pom.xml` file which has all the fixes (CAUTION: the CVEs keep changing, so you may have to try this out during preparation and add additional fixes. If certain CVEs dont have fixes add them to the Allow list!!). This time the build should be successful and the signing should be complete. Show the successful Cloud Build run in the [console](console.cloud.google.com/cloud-build/builds).
+6. Once the build is complete, it triggers deployment using Cloud Deploy. Navigate to [Cloud Deploy on Console](https://console.cloud.google.com/deploy/delivery-pipelines) to show how the deployment progresses on the test cluster.
+7. Show the [binauth policy on the Test Cluster](https://console.cloud.google.com/security/binary-authorization/policy). It accepts only images created via cloud build. Optionally, try deploying a random container and it should fail.
+8. Navigate to [Artifact Registry on the console](https://console.cloud.google.com/artifacts/docker) and show the latest image that is created. Also look at the vulnerabilities identified by the automatic scanner that runs on the Artifact registry.
+9. Navigate to the [Kubernetes Workloads on the console](https://console.cloud.google.com/kubernetes/workload/overview) and show the running application in the Test cluster. 
+10. Navigate back to [Cloud Deploy on Console](https://console.cloud.google.com/deploy/delivery-pipelines) and promote to the next environment. Show the manual approval process as a gate before deploying this application to production. Review and approve the production deployment.
+11. Deploy to production and show the success.
+12. Navigate to security posture of [Kubernetes console](https://console.cloud.google.com/kubernetes/security) and show the configurations and vulnerabilites identified at runtime. This is to show how the runtimes are continuously monitored to identify any security issues that may come up after deployment.
 
 
 

@@ -47,7 +47,7 @@ curl "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/v
           {
             "role": "roles/containeranalysis.notes.occurrences.viewer",
             "members": [
-              "serviceAccount:${CLOUDBUILD_SA_}"
+              "serviceAccount:${CLOUDBUILD_SA}"
             ]
           },
           {

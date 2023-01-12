@@ -14,7 +14,7 @@ source bootstrap/env.sh
 gcloud services enable container.googleapis.com cloudbuild.googleapis.com \
 artifactregistry.googleapis.com containerregistry.googleapis.com clouddeploy.googleapis.com \
 cloudresourcemanager.googleapis.com binaryauthorization.googleapis.com \
-cloudkms.googleapis.com run.googleapis.com workstations.googleapis.com
+cloudkms.googleapis.com run.googleapis.com workstations.googleapis.com containersecurity.googleapis.com
 
 # add the clouddeploy.jobRunner role to your compute service account
 gcloud projects add-iam-policy-binding $PROJECT_ID \

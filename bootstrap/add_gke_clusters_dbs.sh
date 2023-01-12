@@ -172,3 +172,20 @@ kubectl create secret generic gke-cloud-sql-secrets \
   --from-literal=password=$PRODDB_PASSWORD
 
 
+# enable workload configuration audit on the two clusters
+gcloud beta container clusters create-auto test-sec \
+    --zone "us-central1-a" \
+    --enable-workload-config-audit
+
+gcloud beta container clusters create-auto prod-sec \
+    --zone "us-central1-a" \
+    --enable-workload-config-audit
+
+# enable workload vulnerability audit on the two clusters
+gcloud beta container clusters update test-sec \
+  --zone "us-central1-a" \
+  --enable-workload-vulnerability-scanning
+
+gcloud beta container clusters update prod-sec \
+  --zone "us-central1-a" \
+  --enable-workload-vulnerability-scanning
