@@ -173,11 +173,11 @@ kubectl create secret generic gke-cloud-sql-secrets \
 
 
 # enable workload configuration audit on the two clusters
-gcloud beta container clusters create-auto test-sec \
+gcloud beta container clusters update test-sec \
     --zone "us-central1-a" \
     --enable-workload-config-audit
 
-gcloud beta container clusters create-auto prod-sec \
+gcloud beta container clusters update prod-sec \
     --zone "us-central1-a" \
     --enable-workload-config-audit
 
