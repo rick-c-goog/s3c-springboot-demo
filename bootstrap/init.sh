@@ -47,5 +47,22 @@ sed -e "s/project-id-here/${PROJECT_ID}/" templates/template.attestor-policy.yam
 gcloud deploy apply --file clouddeploy.yaml \
 --region=us-central1 --project=$PROJECT_ID
 
+# setup kritis signer
+pushd .
+cd ..
+git clone https://github.com/grafeas/kritis.git
+cd kritis
+
+#build and push the kritis signer image to gcr.io in the project
+gcloud builds submit . --config deploy/kritis-signer/cloudbuild.yaml
+popd
+
+# add signing keys
+source ./bootstrap/add-signing-keys.sh
+
+# setup binauth policy
+gcloud container binauthz policy import policy/binauthz/attestor-policy.yaml
 
 
+# add two gke clusters and databases
+./bootstrap/add_gke_clusters_dbs.sh

@@ -5,15 +5,15 @@ This demo covers the Software Delivery Shield features such as Cloud Workstation
 **Acknowledgements:** This repository is based on Victor Szalvay's https://github.com/vszal/secure-cicd-maven
 
 ## Demo Setup
-### Create a project
-* Create a Google Cloud project and provide all [permissions for GKE setup](https://raw.githubusercontent.com/slsa-demo/tkn-binauth/main/arg_k8s_perms.sh?token=GHSAT0AAAAAABPJH2IFVGFOEYWPGGN6IVFOY57FFAA) if running on argolis. 
-
-* Set PROJECT_ID
-```
-export PROJECT_ID=$(gcloud config get project)
-```
 
 ### Download the bootstrap scripts from this repo
+
+Create a temporary folder where you will be running the demo setup. It will be easy to delete it once you are done.
+
+```
+mkdir secure-cicddemo-test
+cd secure-cicddemo-test
+```
 
 Clone this demo repo. This will download all the scripts you need to run to setup infrastructure for the demo.
 
@@ -21,67 +21,49 @@ Clone this demo repo. This will download all the scripts you need to run to setu
 git clone https://github.com/VeerMuchandi/s3c-springboot-demo
 cd s3c-springboot-demo
 ```
+### Create a project
+* Create a Google Cloud project and provide all [permissions for GKE setup](./bootstrap/arg_k8s_setup.sh) if running on argolis. 
 
-### Create Container Registry and Cloud Deploy pipeline
-The following script enables all needed APIs and deploy the pipeline
+* Set PROJECT_ID
+```
+export PROJECT_ID=$(gcloud config get project)
+```
+### Run the bootstrap script to setup demo infrastructure
+
+The following script 
+* enables all needed APIs and deploy the pipeline
+* creates Kritis Signer
+* adds signing keys
+* creates an Artifact Registry named `maven-demo-app` and turns on automatic scanning of images pushed to this registry
+* creates a Cloud Deploy pipeline to move the application between the clusters
+* adds a binary authorization policy to allow only the images built using Cloud Build and attested by vulnerability attestor
+* creates two GKE clusters with names `test-sec` and `prod-sec` and two databases for test and prod. More GKE clusters can be added. If you choose to add more, the `clouddeploy.yaml` file should be updated accordingly.
 
 ```
 ./bootstrap/init.sh
 ```
-Verify that the Google Cloud Deploy pipeline is created in the [console](https://console.cloud.google.com/deploy/delivery-pipelines).
+Once the script execution is complete:
 
-Also notice that the artifact registry with name `maven-demo-app` is created and the automatic vulnerability scanning is turned on from the [console](https://console.cloud.google.com/artifacts).
+* verify that the Google Cloud Deploy pipeline is created in the [console](https://console.cloud.google.com/deploy/delivery-pipelines).
+
+* verify that the artifact registry with name `maven-demo-app` is created and the automatic vulnerability scanning is turned on from the [console](https://console.cloud.google.com/artifacts).
+
+* verify that your new attestor appears in the [console UI](https://console.cloud.google.com/security/binary-authorization/attestors). You will see two attestors
+  * built-by-cloud-build (system generated)
+  * vulnz-attestor(attestor added by the script above)
+
+* verify the binary authorization policy is created  [console UI](https://console.cloud.google.com/security/binary-authorization/policy)
+
+* verify two clusters `test-sec` and `prod-sec` are setup from 
 
 ### Fork the source code git repo
 We will use a spring boot application in this demo. The source code is in a separate repository. [Fork the source code repo on Github](https://github.com/VeerMuchandi/sbcrudapp)
-
-
 
 ### Connect forked repository to Cloud Build 
 This is a manual step to be handled via [Console](https://console.cloud.google.com/cloud-build). 
 
 Connect the forked GitHub repository to Cloud Build for the `global` region, following the [steps here](https://cloud.google.com/build/docs/automating-builds/github/connect-repo-github)
 
-### Standup GKE clusters
-
-This script creates two GKE clusters with names `test-sec` and `prod-sec` and two databases for test and prod. More GKE clusters can be added. The `clouddeploy.yaml` file should be updated accordingly.
-
-```
-./bootstrap/add_gke_clusters_dbs.sh
-```
-
-### Set up Kritis Signer
-
-```
-pushd .
-cd ..
-git clone https://github.com/grafeas/kritis.git
-cd kritis
-
-#build and push the kritis signer image to gcr.io in the project
-gcloud builds submit . --config deploy/kritis-signer/cloudbuild.yaml
-popd
-```
-
-### Add signing Keys
-
-Run the following script to create a key ring, add signing keys for vulnerability signer, add a note, attestor and required permissions.
-
-```
-./bootstrap/add-signing-keys.sh
-```
-
-Verify that your new attestor appears in the [console UI](https://console.cloud.google.com/security/binary-authorization/attestors). You will see two attestors
-
-* built-by-cloud-build (system generated)
-* vulnz-attestor(attestor added by the script above)
-
-### Setup Binary Authorization policy
-
-```
-gcloud container binauthz policy import policy/binauthz/attestor-policy.yaml
-```
-Verify the policy is created from the [console UI](https://console.cloud.google.com/security/binary-authorization/policy)
 
 ### Setup Cloud Build
 
@@ -94,7 +76,7 @@ The following script will create a cloudbuild trigger connecting to the forked G
 
 ### Install Cloud Workstations
 
-This demo will showcase Cloud Workstations as the IDE. If you already have Cloud Workstations cluster installed somewhere (it doesnt have to be in this project) you can use it. Otherwise you can set up [cloud workstation configuration](https://cloud.google.com/workstations/docs/create-configuration) and start a [workstation instance](https://cloud.google.com/workstations/docs/create-workstation). 
+This demo will showcase Cloud Workstations as the IDE. If you already have Cloud Workstations cluster installed somewhere (it doesn't have to be in this project) you can use it. Otherwise you can set up [cloud workstation configuration](https://cloud.google.com/workstations/docs/create-configuration) and start a [workstation instance](https://cloud.google.com/workstations/docs/create-workstation). 
 
 If you are creating a new Cloud Workstation cluster it takes 10 mins to stand up a new cluster.
 
