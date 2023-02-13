@@ -9,12 +9,13 @@ source bootstrap/env.sh
 
 # create signing keys
 gcloud beta builds triggers create github \
-    --name=deploy-promote \  
+    --name=automated-qa \  
     --region=$REGION \
     --repo-name="sbcrudapp" \
     --repo-owner=$GITHUB_REPO_OWNE \
     --branch-pattern="^main$" \
-    --build-config="cloudbuild-promote.yaml" \
+    --require-approval \
+    --build-config="cloudbuild-automated-qa.yaml" \
     --substitutions _KMS_DIGEST_ALG="SHA256",_KMS_KEY_NAME=projects/$PROJECT_ID/locations/$REGION/keyRings/binauthz/cryptoKeys/qa-signer/cryptoKeyVersions/1,_NOTE_NAME=projects/$PROJECT_ID/notes/qa-note \                                               
     --include-logs-with-status
 
