@@ -10,7 +10,7 @@ fi
 gcloud config set project $PROJECT_ID
 export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
 export CLOUDBUILD_SA=$PROJECT_NUMBER@cloudbuild.gserviceaccount.com
-export GITHUB_REPO_OWNER="VeerMuchandi"
+export GITHUB_REPO_OWNER="rick-c-goog"
 export REGION=us-central1
 
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True

@@ -4,7 +4,7 @@ source bootstrap/env.sh
 
 # create build trigger connecting to the forked GitHub repo
 
-    gcloud beta builds triggers create github \
+     gcloud beta builds triggers create github \
     --name=maven-app-trigger \
     --region=$REGION \
     --repo-name="sbcrudapp" \

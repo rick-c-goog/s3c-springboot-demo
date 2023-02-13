@@ -28,6 +28,6 @@ kind: Target
 metadata:
   name: prod-sec
 description: prod cluster
-requireApproval: true
+#requireApproval: true
 gke:
   cluster: projects/veer-s3c-mvn2/locations/us-central1-a/clusters/prod-sec
