@@ -7,7 +7,7 @@ source bootstrap/env.sh
 #  --project "${PROJECT_ID}" \
 #  --location "${REGION}"
 
-# create signing keys
+# cereate signing keys
 gcloud beta builds triggers create github \
     --name=automated-qa \  
     --region=$REGION \
