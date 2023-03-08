@@ -2,7 +2,7 @@
 resource "google_container_cluster" "dev_cluster" {
   name     = "dev-cluster"
   count    = var.use_cloud_run ? 0 : 1 #Used to "enable" or "disable" a resource conditionally.
-  location = var.google_cloud_region
+  location = var.region
   binary_authorization {
     evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
   }
@@ -14,7 +14,7 @@ resource "google_container_cluster" "dev_cluster" {
 resource "google_container_cluster" "prod_cluster" {
   name     = "prod-cluster"
   count    = var.use_cloud_run ? 0 : 1 #Used to "enable" or "disable" a resource conditionally. 
-  location = var.google_cloud_region
+  location = var.region
   binary_authorization {
     evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
   }

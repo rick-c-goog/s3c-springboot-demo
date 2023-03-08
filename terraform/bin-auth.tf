@@ -16,7 +16,7 @@ resource "null_resource" "build_kritis" {
 resource "google_kms_key_ring" "keyring" {
   name     = "binauthz"
   location = "${var.region}"
-  project = "${var.project}"
+  project = "${var.project_id}"
 }
 
 resource "google_kms_crypto_key" "vulnz-key" {

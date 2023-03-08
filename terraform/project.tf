@@ -65,7 +65,7 @@ resource "null_resource" "update_templates" {
     command = <<-EOT
     gcloud auth configure-docker us-central1-docker.pkg.dev
     sed -e "s/project-id-here/${var.project_id}/" templates/template.clouddeploy.yaml > clouddeploy.yaml
-    sed -e "s/project-id-here/${var.project_i}/" templates/template.allowlist-policy.yaml > policy/binauthz/allowlist-policy.yaml
+    sed -e "s/project-id-here/${var.project_id}/" templates/template.allowlist-policy.yaml > policy/binauthz/allowlist-policy.yaml
     sed -e "s/project-id-here/${var.project_id}/" templates/template.attestor-policy.yaml > policy/binauthz/attestor-policy.yaml
   EOT
   }

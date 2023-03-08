@@ -32,7 +32,7 @@ resource "google_clouddeploy_target" "test" {
   description = "test gke target"
 
   gke {
-    cluster = "projects/${var.project_id}/locations/${var.zone}/clusters/test-sec"
+    cluster = "projects/${var.project_id}/locations/${var.region}/clusters/test-sec"
   }
 
   
@@ -47,7 +47,7 @@ resource "google_clouddeploy_target" "prod" {
   description = "prod gke target"
 
   gke {
-    cluster = "projects/${var.project_id}/locations/${var.zone}/clusters/prod-sec"
+    cluster = "projects/${var.project_id}/locations/${var.region}/clusters/prod-sec"
   }
 
   

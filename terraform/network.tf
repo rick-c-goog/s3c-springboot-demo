@@ -3,7 +3,7 @@
 resource "google_compute_global_address" "global_ip_alloc" {
   name          = "google-managed-services-default"
   purpose       = "VPC_PEERING"
-  address_type  = "global"
+  address_type  = "EXTERNAL"
   prefix_length = 20
   network       = "default"
 }
