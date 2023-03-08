@@ -63,7 +63,7 @@ data "google_kms_crypto_key_version" "vulnz-version" {
 
 module "project-iam-bindings" {
   source   = "terraform-google-modules/iam/google//modules/projects_iam"
-  projects = [${var.project_id}]
+  projects = [var.project_id]
   mode     = "additive"
 
   bindings = {
