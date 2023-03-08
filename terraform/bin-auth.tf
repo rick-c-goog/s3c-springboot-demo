@@ -172,14 +172,14 @@ resource "null_resource" "note_iam_policy_vulnz" {
   
   provisioner "local-exec" {
     command = <<-EOT
-    curl "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/vulnz-note:setIamPolicy" \
+    curl "https://containeranalysis.googleapis.com/v1/projects/${var.project_id}/notes/vulnz-note:setIamPolicy" \
   --request POST \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer $(gcloud auth print-access-token)" \
-  --header "X-Goog-User-Project: ${PROJECT_ID}" \
+  --header "X-Goog-User-Project: ${var.project_id}" \
   --data-binary @- <<EOF
     {
-      "resource": "projects/${PROJECT_ID}/notes/vulnz-note",
+      "resource": "projects/${var.project_id}/notes/vulnz-note",
       "policy": {
         "bindings": [
           {
@@ -208,14 +208,14 @@ resource "null_resource" "note_iam_policy_qa" {
   
   provisioner "local-exec" {
     command = <<-EOT
-    curl "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/qa-note:setIamPolicy" \
+    curl "https://containeranalysis.googleapis.com/v1/projects/${var.project_id}/notes/qa-note:setIamPolicy" \
   --request POST \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer $(gcloud auth print-access-token)" \
-  --header "X-Goog-User-Project: ${PROJECT_ID}" \
+  --header "X-Goog-User-Project: ${var.project_id}" \
   --data-binary @- <<EOF
     {
-      "resource": "projects/${PROJECT_ID}/notes/qa-note",
+      "resource": "projects/${var.project_id}/notes/qa-note",
       "policy": {
         "bindings": [
           {
