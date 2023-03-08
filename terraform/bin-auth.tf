@@ -78,16 +78,6 @@ module "project-iam-bindings" {
 }
 
 
-
-resource "google_binary_authorization_attestor_iam_binding" "vulnz-viewer-binding" {
-  project = var.project_id
-  attestor = google_binary_authorization_attestor.vulnz-attestor.name
-  role = "roles/binaryauthorization.attestorsViewer"
-  members = [
-    "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
-  ]
-}
-
 resource "google_kms_key_ring_iam_binding" "key_ring" {
   key_ring_id = google_kms_key_ring.keyring.id
   role        = "roles/cloudkms.signerVerifier"
@@ -178,19 +168,75 @@ data "google_kms_crypto_key_version" "qa-version" {
 }
 
 
-
-
-resource "google_binary_authorization_attestor_iam_binding" "qa-viewer-binding" {
-  project = var.project_id
-  attestor = google_binary_authorization_attestor.qa-attestor.name
-  role = "roles/binaryauthorization.attestorsViewer"
-  members = [
-    "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
-  ]
+resource "null_resource" "note_iam_policy_vulnz" {
+  
+  provisioner "local-exec" {
+    command = <<-EOT
+    curl "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/vulnz-note:setIamPolicy" \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer $(gcloud auth print-access-token)" \
+  --header "X-Goog-User-Project: ${PROJECT_ID}" \
+  --data-binary @- <<EOF
+    {
+      "resource": "projects/${PROJECT_ID}/notes/vulnz-note",
+      "policy": {
+        "bindings": [
+          {
+            "role": "roles/containeranalysis.notes.occurrences.viewer",
+            "members": [
+              "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
+            ]
+          },
+          {
+            "role": "roles/containeranalysis.notes.attacher",
+            "members": [
+              "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
+            ]
+          }
+        ]
+      }
+    }
+  EOF
+  EOT
+  }
 }
 
 
 
+resource "null_resource" "note_iam_policy_qa" {
+  
+  provisioner "local-exec" {
+    command = <<-EOT
+    curl "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/qa-note:setIamPolicy" \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer $(gcloud auth print-access-token)" \
+  --header "X-Goog-User-Project: ${PROJECT_ID}" \
+  --data-binary @- <<EOF
+    {
+      "resource": "projects/${PROJECT_ID}/notes/qa-note",
+      "policy": {
+        "bindings": [
+          {
+            "role": "roles/containeranalysis.notes.occurrences.viewer",
+            "members": [
+              "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
+            ]
+          },
+          {
+            "role": "roles/containeranalysis.notes.attacher",
+            "members": [
+              "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
+            ]
+          }
+        ]
+      }
+    }
+  EOF
+  EOT
+  }
+}
 
 
 

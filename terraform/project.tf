@@ -61,6 +61,7 @@ resource "google_artifact_registry_repository" "my-repo" {
 3.  Create Artifact Registry Repo
  *****************************************/
 resource "null_resource" "update_templates" {
+  count=0
   provisioner "local-exec" {
     command = <<-EOT
     gcloud auth configure-docker us-central1-docker.pkg.dev

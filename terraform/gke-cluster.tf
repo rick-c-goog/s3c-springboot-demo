@@ -1,6 +1,6 @@
 
 resource "google_container_cluster" "dev_cluster" {
-  name     = "dev-cluster"
+  name     = "test-sec"
   count    = var.use_cloud_run ? 0 : 1 #Used to "enable" or "disable" a resource conditionally.
   location = var.region
   binary_authorization {
@@ -11,7 +11,7 @@ resource "google_container_cluster" "dev_cluster" {
   ip_allocation_policy {}
 }
 
-resource "google_container_cluster" "prod_cluster" {
+resource "google_container_cluster" "prod_sec" {
   name     = "prod-cluster"
   count    = var.use_cloud_run ? 0 : 1 #Used to "enable" or "disable" a resource conditionally. 
   location = var.region
