@@ -1,6 +1,6 @@
 resource "google_clouddeploy_delivery_pipeline" "run" {
   location = "var.region"
-  name     = "run-security-demo-pipeline"
+  name     = "security-demo-pipeline"
   count       = var.use_cloud_run ? 1 : 0
   description = "Security-focused CI/CD pipeline on GCP"
 
