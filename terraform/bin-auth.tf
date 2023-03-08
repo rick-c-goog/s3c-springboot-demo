@@ -75,6 +75,7 @@ module "project-iam-bindings" {
       
     ]
   }
+}
 
 
 

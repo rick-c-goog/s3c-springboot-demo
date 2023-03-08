@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # bail if PROJECT_ID is not set 
-export TF_VAR_project_id=XXXX
-if [[ -z "${PROJECT_ID}" ]]; then
+export TF_VAR_project_id=rick-iac-cp
+if [[ -z "${TF_VAR_project_id}" ]]; then
   echo "The value of PROJECT_ID is not set. Be sure to run \"export PROJECT_ID=YOUR-PROJECT\" first"
   return
 fi
@@ -12,3 +12,7 @@ gcloud config set project $TF_VAR_project_id
 export TF_VAR_project_number=$(gcloud projects describe $TF_VAR_project_id --format="value(projectNumber)")
 export TF_VAR_region=us-central1
 export TF_VAR_zone=us-central1-a
+
+terraform init
+terraform plan
+terraform apply
