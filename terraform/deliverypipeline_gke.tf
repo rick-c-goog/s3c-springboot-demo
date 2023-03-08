@@ -42,7 +42,7 @@ resource "google_clouddeploy_target" "test" {
 
 resource "google_clouddeploy_target" "prod" {
   location = var.region
-  name     = "test-sec"
+  name     = "prod-sec"
   count       = var.use_cloud_run ? 0 : 1
   description = "prod gke target"
 
