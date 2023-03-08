@@ -63,15 +63,15 @@ data "google_kms_crypto_key_version" "vulnz-version" {
 
 module "project-iam-bindings" {
   source   = "terraform-google-modules/iam/google//modules/projects_iam"
-  projects = var.project_id
+  projects = [${var.project_id}]
   mode     = "additive"
 
   bindings = {
     "roles/containeranalysis.notes.occurrences.viewer" = [
-      "${var.project_number}@cloudbuild.gserviceaccount.com",
+      "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
     ]
     "roles/containeranalysis.notes.attacher" = [
-      "${var.project_number}@cloudbuild.gserviceaccount.com",
+      "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
       
     ]
   }
@@ -84,7 +84,7 @@ resource "google_binary_authorization_attestor_iam_binding" "vulnz-viewer-bindin
   attestor = google_binary_authorization_attestor.vulnz-attestor.name
   role = "roles/binaryauthorization.attestorsViewer"
   members = [
-    "${var.project_number}@cloudbuild.gserviceaccount.com",
+    "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
   ]
 }
 
@@ -93,7 +93,7 @@ resource "google_kms_key_ring_iam_binding" "key_ring" {
   role        = "roles/cloudkms.signerVerifier"
   
   members = [
-    "${var.project_number}@cloudbuild.gserviceaccount.com",
+    "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
   ]
 }
 
@@ -185,7 +185,7 @@ resource "google_binary_authorization_attestor_iam_binding" "qa-viewer-binding" 
   attestor = google_binary_authorization_attestor.qa-attestor.name
   role = "roles/binaryauthorization.attestorsViewer"
   members = [
-    "${var.project_number}@cloudbuild.gserviceaccount.com",
+    "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
   ]
 }
 
