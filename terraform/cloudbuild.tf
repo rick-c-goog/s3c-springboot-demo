@@ -86,6 +86,7 @@ resource "google_cloudbuild_trigger" "qa-trigger" {
   approval_config {
      approval_required = true 
   }
+  
   filename = "cloudbuild.yaml"
   substitutions = {
     _KMS_DIGEST_ALG = "SHA256"
