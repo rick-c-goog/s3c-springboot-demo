@@ -112,7 +112,7 @@ resource "google_cloudbuild_worker_pool" "pool" {
   depends_on = [google_service_networking_connection.worker_pool_conn]
 }
 
-module "project-iam-bindings" {
+module "cloudbuild-iam-bindings" {
   source   = "terraform-google-modules/iam/google//modules/projects_iam"
   projects = [var.project_id]
   mode     = "additive"
