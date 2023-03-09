@@ -12,6 +12,8 @@ gcloud config set project $TF_VAR_project_id
 export TF_VAR_project_number=$(gcloud projects describe $TF_VAR_project_id --format="value(projectNumber)")
 export TF_VAR_region=us-central1
 export TF_VAR_zone=us-central1-a
+export TF_VAR_github_token=""
+export TF_VAR_github_url="https://github.com/rick-c-goog/sbcrudapp.git"
 
 terraform init
 terraform plan
