@@ -78,15 +78,15 @@ resource "google_cloudbuild_trigger" "qa-trigger" {
   location = var.region
   name="automated-qa"
   
-  git_file_source {
-    path      = "cloudbuild.yaml"
+  source_to_build {
     uri       = var.github_url
-    revision  = "refs/heads/main"
+    ref       = "refs/heads/main"
     repo_type = "GITHUB"
   }
   approval_config {
      approval_required = true 
   }
+  filename = "cloudbuild.yaml"
   substitutions = {
     _KMS_DIGEST_ALG = "SHA256"
     _KMS_KEY_NAME = "projects/${var.project_id}/locations/${var.region}/keyRings/binauthz/cryptoKeys/qa-signer/cryptoKeyVersions/1"
