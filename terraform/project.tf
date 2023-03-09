@@ -11,7 +11,7 @@ module "activate_service_apis" {
     "container.googleapis.com", "cloudbuild.googleapis.com","artifactregistry.googleapis.com", "containerregistry.googleapis.com", "clouddeploy.googleapis.com",
     "cloudresourcemanager.googleapis.com", "binaryauthorization.googleapis.com","cloudkms.googleapis.com",
     "run.googleapis.com", "workstations.googleapis.com", "containersecurity.googleapis.com","containerscanning.googleapis.com",
-    "cloudresourcemanager.googleapis.com","servicenetworking.googleapis.com","sqladmin.googleapis.com"
+    "cloudresourcemanager.googleapis.com","servicenetworking.googleapis.com","sqladmin.googleapis.com","secretmanager.googleapis.com"
   ]
 
   disable_services_on_destroy = false
