@@ -56,7 +56,7 @@ resource "google_cloudbuild_trigger" "repo-trigger" {
   location = "us-central1"
 
   repository_event_config {
-    repository = google_cloudbuildv2_repository.git-repository.id
+    repository = google_cloudbuildv2_repository.gh-repository.id
     push {
       branch = "main"
     }
