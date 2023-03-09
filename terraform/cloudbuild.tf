@@ -106,7 +106,7 @@ resource "google_cloudbuild_worker_pool" "pool" {
     no_external_ip = false
   }
   network_config {
-    peered_network = "default"
+    peered_network = "projects/${var.project_id}/global/networks/default"
     peered_network_ip_range = "/29"
   }
   depends_on = [google_service_networking_connection.worker_pool_conn]
