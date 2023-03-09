@@ -9,7 +9,7 @@ resource "google_compute_global_address" "global_ip_alloc" {
 }
 
 # Create a private connection
-resource "google_service_networking_connection" "default" {
+resource "google_service_networking_connection" "worker_pool_conn" {
   network                 = "default"
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.global_ip_alloc.name]

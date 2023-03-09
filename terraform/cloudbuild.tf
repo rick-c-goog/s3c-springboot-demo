@@ -86,7 +86,7 @@ resource "google_cloudbuild_trigger" "qa-trigger" {
   approval_config {
      approval_required = true 
   }
-  
+
   filename = "cloudbuild.yaml"
   substitutions = {
     _KMS_DIGEST_ALG = "SHA256"
@@ -94,4 +94,45 @@ resource "google_cloudbuild_trigger" "qa-trigger" {
     _NOTE_NAME= "projects/${var.project_id}/notes/qa-note"
   }
 
+}
+
+
+resource "google_cloudbuild_worker_pool" "pool" {
+  name = "my-pool"
+  location = var.region
+  worker_config {
+    disk_size_gb = 100
+    machine_type = "e2-standard-4"
+    no_external_ip = false
+  }
+  network_config {
+    peered_network = "default"
+    peered_network_ip_range = "/29"
+  }
+  depends_on = [google_service_networking_connection.worker_pool_conn]
+}
+
+module "project-iam-bindings" {
+  source   = "terraform-google-modules/iam/google//modules/projects_iam"
+  projects = [var.project_id]
+  mode     = "additive"
+  bindings = {
+    "roles/iam.serviceAccountUser" = [
+      "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
+    ]
+    "roles/clouddeploy.releaser" = [
+      "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
+      
+    ]
+     "roles/cloudbuild.workerPoolUser" = [
+      "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
+    ]
+    "roles/clouddeploy.releaser" = [
+      "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com",
+      
+    ]
+     "roles/cloudbuild.workerPoolUser" = [
+      "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com",
+    ]
+  }
 }
