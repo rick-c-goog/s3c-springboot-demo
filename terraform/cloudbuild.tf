@@ -36,7 +36,7 @@ resource "google_cloudbuildv2_connection" "gh-connection" {
   name = "springboot-github-connection"
 
   github_config {
-    app_installation_id = 300
+    app_installation_id = "Google Cloud Build"
     authorizer_credential {
       oauth_token_secret_version = google_secret_manager_secret_version.github-token-secret-version.id
     }
