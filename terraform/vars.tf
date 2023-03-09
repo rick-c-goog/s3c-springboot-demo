@@ -6,3 +6,5 @@ variable "use_cloud_run" {
    type  = bool
    default=false
 }
+variable "github_token" {}
+variable "github_url" {}
