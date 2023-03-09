@@ -20,7 +20,7 @@ data "google_iam_policy" "p4sa-secretAccessor" {
   binding {
     role = "roles/secretmanager.secretAccessor"
     // Here, 123456789 is the Google Cloud project number for my-project-name.
-    members = ["serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"]
+    members = ["serviceAccount:srvice-${var.project_number}@gcp-sa-cloudbuild.iam.gserviceaccount.com"]
   }
 }
 
