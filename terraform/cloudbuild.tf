@@ -51,10 +51,10 @@ resource "google_cloudbuildv2_repository" "gh-repository" {
   remote_uri = var.github_url
 }
 
-resource "google_cloudbuild_trigger" "repo-trigger" {
+resource "google_cloudbuild_trigger" "build-trigger" {
   provider = google-beta
-  location = "us-central1"
-
+  location = var.region
+  name="maven-app-trigger"
   repository_event_config {
     repository = google_cloudbuildv2_repository.gh-repository.id
     push {
@@ -63,4 +63,34 @@ resource "google_cloudbuild_trigger" "repo-trigger" {
   }
 
   filename = "cloudbuild.yaml"
+
+  substitutions = {
+    _KMS_DIGEST_ALG = "SHA256"
+    _KMS_KEY_NAME = "projects/${var.project_id}/locations/${var.region}/keyRings/binauthz/cryptoKeys/vulnz-signer/cryptoKeyVersions/1"
+    _NOTE_NAME= "projects/${var.project_id}/notes/vulnz-note"
+  }
+
+}
+
+
+resource "google_cloudbuild_trigger" "qa-trigger" {
+  provider = google-beta
+  location = var.region
+  name="automated-qa"
+  
+  git_file_source {
+    path      = "cloudbuild.yaml"
+    uri       = var.github_url
+    revision  = "refs/heads/main"
+    repo_type = "GITHUB"
+  }
+  approval_config {
+     approval_required = true 
+  }
+  substitutions = {
+    _KMS_DIGEST_ALG = "SHA256"
+    _KMS_KEY_NAME = "projects/${var.project_id}/locations/${var.region}/keyRings/binauthz/cryptoKeys/qa-signer/cryptoKeyVersions/1"
+    _NOTE_NAME= "projects/${var.project_id}/notes/qa-note"
+  }
+
 }
