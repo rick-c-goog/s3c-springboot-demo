@@ -33,8 +33,8 @@ data "google_iam_policy" "noauth" {
 
 resource "google_cloud_run_service_iam_policy" "test_noauth_policy" {
   count    = var.use_cloud_run ? 1 : 0
-  location = google_cloud_run_service.test-service.location
-  service  = google_cloud_run_service.test-service.name
+  location = var.region
+  service  = google_cloud_run_service.test-service[count.index].name
 
   policy_data = data.google_iam_policy.noauth.policy_data
 }
@@ -64,8 +64,8 @@ resource "google_cloud_run_service" "prod-service" {
 
 resource "google_cloud_run_service_iam_policy" "prod_noauth_policy" {
   count    = var.use_cloud_run ? 1 : 0
-  location = google_cloud_run_service.prod-service.location
-  service  = google_cloud_run_service.prod-service.name
+  location = var.region
+  service  = google_cloud_run_service.prod-service[count.index].name
 
   policy_data = data.google_iam_policy.noauth.policy_data
 }
